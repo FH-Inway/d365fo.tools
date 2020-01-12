@@ -161,5 +161,5 @@ function Invoke-D365AzureStorageUpload {
         }
     }
 
-    END {}
+    END { }
 }
