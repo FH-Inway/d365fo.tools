@@ -94,6 +94,8 @@ function Invoke-D365AzureStorageUpload {
 
         [Parameter(Mandatory = $false)]
         [string] $ContentType,
+        
+        [switch] $Force,
 
         [switch] $DeleteOnUpload,
 
@@ -112,26 +114,22 @@ function Invoke-D365AzureStorageUpload {
         if (Test-PSFFunctionInterrupt) { return }
 
         Invoke-TimeSignal -Start
+
+        $FileName = Split-Path -Path $Filepath -Leaf
         try {
 
             if ([string]::IsNullOrEmpty($SAS)) {
                 Write-PSFMessage -Level Verbose -Message "Working against Azure Storage Account with AccessToken"
 
-                $storageContext = new-AzureStorageContext -StorageAccountName $AccountId.ToLower() -StorageAccountKey $AccessToken
+                $storageContext = New-AzStorageContext -StorageAccountName $AccountId.ToLower() -StorageAccountKey $AccessToken
             }
             else {
                 $conString = $("BlobEndpoint=https://{0}.blob.core.windows.net/;QueueEndpoint=https://{0}.queue.core.windows.net/;FileEndpoint=https://{0}.file.core.windows.net/;TableEndpoint=https://{0}.table.core.windows.net/;SharedAccessSignature={1}" -f $AccountId.ToLower(), $SAS)
 
                 Write-PSFMessage -Level Verbose -Message "Working against Azure Storage Account with SAS" -Target $conString
                 
-                $storageContext = new-AzureStorageContext -ConnectionString $conString
+                $storageContext = New-AzStorageContext -ConnectionString $conString
             }
-
-            $cloudStorageAccount = [Microsoft.WindowsAzure.Storage.CloudStorageAccount]::Parse($storageContext.ConnectionString)
-
-            $blobClient = $cloudStorageAccount.CreateCloudBlobClient()
-
-            $blobContainer = $blobClient.GetContainerReference($Container.ToLower());
 
             if ([string]::IsNullOrEmpty($ContentType)) {
                 $ContentType = [System.Web.MimeMapping]::GetMimeMapping($Filepath) # Available since .NET4.5, so it can be used with PowerShell 5.0 and higher.
@@ -141,14 +139,7 @@ function Invoke-D365AzureStorageUpload {
 
             Write-PSFMessage -Level Verbose -Message "Start uploading the file to Azure"
 
-            $FileName = Split-Path $Filepath -Leaf
-            $blockBlob = $blobContainer.GetBlockBlobReference($FileName)
-
-            if (![string]::IsNullOrEmpty($ContentType)) {
-                $blockBlob.Properties.ContentType = $ContentType
-            }
-
-            $blockBlob.UploadFromFile($Filepath)
+            Set-AzStorageBlobContent -Context $storageContext -File $Filepath -Container $($Container.ToLower()) -Properties @{"ContentType" = $ContentType} -Force:$Force
 
             if ($DeleteOnUpload) {
                 Remove-Item $Filepath -Force
