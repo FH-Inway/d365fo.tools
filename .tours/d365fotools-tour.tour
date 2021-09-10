@@ -1,0 +1,27 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Intro",
+  "steps": [
+    {
+      "title": "Welcome!",
+      "description": "Welcome to the d365fo.tools!\r\nThis tour aims to give you a brief overview of the capabilities of the d365fo.tools. It also shows you where you can find the commands and documentation on each command."
+    },
+    {
+      "file": "README.md",
+      "description": "The README helps you get started with the d365fo.tools. ",
+      "line": 1,
+      "title": "Get Started"
+    },
+    {
+      "directory": "d365fo.tools/functions",
+      "description": "The functions folder contains all the d365fo.tools commands available after installing the module. If you want to learn more about the categories of commands available, take a look at the other tours available.\r\n\r\nSince there are a lot of commands, keep the following general tips in mind:\r\n1. The first part of each command before the - symbol is one of the [approved verbs for PowerShell commands](https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands). For commands where no better approved verb exists, the ```Invoke``` verb is used instead. \r\n1. After the - symbol, the text ```D365``` appears. This is to distinguish the commands from commands of other PowerShell modules.\r\n1. The rest of the command identifies the D365 specific area that the command applies to.",
+      "title": "Commands"
+    },
+    {
+      "directory": "docs",
+      "description": "The docs folder contains the documentation of the d365fo.tools commands. You can also access this information in PowerShell after the d365fo.tools have been installed.",
+      "title": "Documentation"
+    }
+  ],
+  "isPrimary": true
+}
