@@ -72,17 +72,17 @@
 
 function Invoke-D365LcsApiRefreshToken {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseProcessBlockForPipelineCommand", "")]
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = "Simple")]
     [OutputType()]
     param (
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ParameterSetName = "Simple")]
-        [Parameter(Mandatory = $true, ParameterSetName = "Object")]
-        [string] $ClientId,
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, ParameterSetName = "Simple")]
+        [Parameter(Mandatory = $false, ParameterSetName = "Object")]
+        [string] $ClientId = $Script:LcsApiClientId,
 
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ParameterSetName = "Simple")]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, ParameterSetName = "Simple")]
         [Alias('refresh_token')]
         [Alias('Token')]
-        [string] $RefreshToken,
+        [string] $RefreshToken = $Script:LcsApiRefreshToken,
 
         [Parameter(Mandatory = $false, ParameterSetName = "Object")]
         [PSCustomObject] $InputObject,
@@ -90,10 +90,22 @@ function Invoke-D365LcsApiRefreshToken {
         [switch] $EnableException
     )
 
+    Invoke-TimeSignal -Start
+
     if ($PsCmdlet.ParameterSetName -eq "Simple") {
-        Invoke-RefreshToken -AuthProviderUri $Script:AADOAuthEndpoint @PSBoundParameters
+        # Add default values to $PSBoundParameters
+        $parms = Get-DeepClone $PSBoundParameters
+        if (-not $parms.ContainsKey('ClientId')) {
+            $parms['ClientId'] = $Script:LcsApiClientId
+        }
+        if (-not $parms.ContainsKey('RefreshToken')) {
+            $parms['RefreshToken'] = $Script:LcsApiRefreshToken
+        }
+        Invoke-RefreshToken -AuthProviderUri $Script:AADOAuthEndpoint $params
     }
     else {
-        Invoke-RefreshToken -AuthProviderUri $Script:AADOAuthEndpoint -ClientId $ClientId -RefreshToken $InputObject.refresh_token
+        Invoke-RefreshToken -AuthProviderUri $Script:AADOAuthEndpoint -ClientId $ClientId -RefreshToken $InputObject.refresh_token -Verbose:$Verbose
     }
+
+    Invoke-TimeSignal -End
 }
