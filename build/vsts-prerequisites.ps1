@@ -4,10 +4,8 @@ Write-Host "The user running is: $($env:UserName)"
 # $modules = @("PSFramework", "Az.Storage", "AzureAd", "PSNotification", "PSOAuthHelper", "PowerShellGet", "PackageManagement","ImportExcel","PSScriptAnalyzer")
 $modules = @("PSFramework", "PSScriptAnalyzer", "Az.Storage", "AzureAd", "PSNotification", "PSOAuthHelper", "ImportExcel")
 
+Write-Host "Installing Pester, maximum version 4.99.99" -ForegroundColor Cyan
 Install-Module "Pester" -MaximumVersion 4.99.99 -Force -Confirm:$false -Scope CurrentUser -AllowClobber -SkipPublisherCheck
-# TODO: When issue #645 with PSFramework is resolved, this line can be removed again.
-# https://github.com/PowershellFrameworkCollective/psframework/issues/645
-Install-Module "PSFramework" -MaximumVersion 1.11.343 -Force -Confirm:$false -Scope CurrentUser -AllowClobber -SkipPublisherCheck
 
 foreach ($item in $modules) {
     
@@ -16,6 +14,7 @@ foreach ($item in $modules) {
     if ($null -eq $module) {
         Write-Host "Installing $item" -ForegroundColor Cyan
         Install-Module -Name $item -Force -Confirm:$false -Scope CurrentUser -AllowClobber -SkipPublisherCheck
+        Get-Module -Name $item -ListAvailable
     }
 
     Import-Module $item -Force
