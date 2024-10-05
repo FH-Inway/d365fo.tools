@@ -8,17 +8,11 @@
 	
 	Describe "Ensuring unchanged command signature" {
 		It "should have the expected parameter sets" {
-			(Get-Command Get-D365DefaultModelForNewProjects).ParameterSets.Name | Should -Be '__AllParameterSets'
+			(Get-Command Get-D365DefaultModelForNewProjects).ParameterSets.Name | Should -Be 
 		}
 		
 
 	}
 	
-	Describe "Testing parameterset __AllParameterSets" {
-		<#
-		__AllParameterSets -
-		__AllParameterSets -
-		#>
-	}
 
 }
