@@ -135,7 +135,7 @@ function Get-D365Module {
     process {
         if (Test-PSFFunctionInterrupt) { return }
 
-        Write-PSFMessage -Level Verbose -Message "Intializing RuntimeProvider."
+        Write-PSFMessage -Level Verbose -Message "Initializing RuntimeProvider."
 
         $runtimeProviderConfiguration = New-Object Microsoft.Dynamics.AX.Metadata.Storage.Runtime.RuntimeProviderConfiguration -ArgumentList $PackageDirectory
         $metadataProviderFactoryViaRuntime = New-Object Microsoft.Dynamics.AX.Metadata.Storage.MetadataProviderFactory

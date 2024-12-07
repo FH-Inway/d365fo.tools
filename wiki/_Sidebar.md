@@ -55,6 +55,7 @@
 * [[Azure DevOps Build Configuration]]
 * [[Building-tools]]
 * [[How To Write Wiki Pages]]
+* [[New Function]]
 
 ## **Quality Control**
 * [[Testing & QA]]
@@ -68,3 +69,4 @@
 ## **Troubleshooting**
 * [[Troubleshoot]]
 * [[Load individual files or dot source the files]]
+* [[Call Internal Functions]]
