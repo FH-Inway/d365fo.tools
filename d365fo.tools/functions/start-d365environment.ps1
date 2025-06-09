@@ -1,5 +1,4 @@
-﻿
-<#
+﻿<#
     .SYNOPSIS
         Cmdlet to start the different services in a Dynamics 365 Finance & Operations environment
         
@@ -138,6 +137,21 @@ function Start-D365Environment {
         }
 
         $temp | Start-Service -ErrorAction SilentlyContinue -WarningAction $warningActionValue
+
+        # Start IIS App Pool if AOS is being started
+        if ($Aos -or $All) {
+            try {
+                if (-not (Get-Module -ListAvailable -Name WebAdministration)) {
+                    Write-PSFMessage -Level Warning -Message "The 'WebAdministration' module is not installed. Please install it with: Install-WindowsFeature -Name Web-WebServer -IncludeManagementTools or Install-Module -Name WebAdministration -Scope CurrentUser"
+                } else {
+                    Import-Module WebAdministration -ErrorAction Stop
+                    Invoke-Command -ComputerName $server -ScriptBlock { Start-WebAppPool -Name 'AOSService' } -ErrorAction SilentlyContinue
+                    Write-PSFMessage -Level Verbose -Message "IIS Application Pool 'AOSService' started on $server."
+                }
+            } catch {
+                Write-PSFMessage -Level Warning -Message "Failed to start IIS Application Pool 'AOSService' on $($server): $($PSItem)"
+            }
+        }
 
         if ($server -eq $env:computername -and ($($temp -join ",") -like "*w3svc*")) {
             Start-Website -Name "AOSService"

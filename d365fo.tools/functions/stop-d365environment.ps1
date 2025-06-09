@@ -1,5 +1,4 @@
-﻿
-<#
+﻿<#
     .SYNOPSIS
         Cmdlet to stop the different services in a Dynamics 365 Finance & Operations environment
         
@@ -142,6 +141,21 @@ function Stop-D365Environment {
                 $service = Get-CimInstance -ClassName "win32_service" -Filter "Name = '$($_.Name)'"
 
                 Stop-Process -Id "$($service.ProcessId)" -Force -ErrorAction SilentlyContinue -WarningAction $warningActionValue
+            }
+        }
+
+        # Stop IIS App Pool if AOS is being stopped
+        if ($Aos -or $All) {
+            try {
+                if (-not (Get-Module -ListAvailable -Name WebAdministration)) {
+                    Write-PSFMessage -Level Warning -Message "The 'WebAdministration' module is not installed. Please install it with: Install-WindowsFeature -Name Web-WebServer -IncludeManagementTools or Install-Module -Name WebAdministration -Scope CurrentUser"
+                } else {
+                    Import-Module WebAdministration -ErrorAction Stop
+                    Invoke-Command -ComputerName $server -ScriptBlock { Stop-WebAppPool -Name 'AOSService' } -ErrorAction SilentlyContinue
+                    Write-PSFMessage -Level Verbose -Message "IIS Application Pool 'AOSService' stopped on $server."
+                }
+            } catch {
+                Write-PSFMessage -Level Warning -Message "Failed to stop IIS Application Pool 'AOSService' on $($server): $($PSItem)"
             }
         }
     }
