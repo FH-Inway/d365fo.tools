@@ -260,6 +260,7 @@
 		'New-D365ISVLicense',
 		'New-D365ModuleToRemove',
 		'New-D365TopologyFile',
+		'New-D365TraceParserSourceFolder',
 
 		'Publish-D365WebResources',
 		'Publish-D365SsrsReport',
