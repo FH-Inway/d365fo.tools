@@ -28,7 +28,7 @@
 	# To enable the GitHub dependency graph, changes should be synchronized with
 	# https://github.com/d365collaborative/d365fo.tools/blob/master/.github/workflows/dependencies.yml
 	RequiredModules   = @(
-		@{ ModuleName = 'PSFramework'; ModuleVersion = '1.0.12' }
+		@{ ModuleName = 'PSFramework'; ModuleVersion = '1.9.308' }
 		, @{ ModuleName = 'Az.Storage'; ModuleVersion = '1.11.0' }
 		, @{ ModuleName = 'PSOAuthHelper'; ModuleVersion = '0.3.0' }
 		, @{ ModuleName = 'ImportExcel'; ModuleVersion = '7.1.0' }
