@@ -4,16 +4,16 @@
         Request just in time (JIT) database access for a unified development environment (UDE)
 
     .DESCRIPTION
-        Utilize the D365FO OData API to request just in time access (JIT) to a UDE database
+        Utilize the D365FO Power Platform OData API to request just in time access (JIT) to a UDE database
 
         This will allow you to get temporary database credentials for connecting to the database directly
 
     .PARAMETER Url
-        URL / URI for the D365FO environment you want to access
+        URL / URI for the D365FO Power Platform environment that provides the JIT access API.
 
-        If you are working against a D365FO instance, it will be the URL / URI for the instance itself
+        Note: This is not the URL of the D365FO environment itself (aka the Finance and Operations URL). Instead, it is the URL of the Power Platform environment (aka the Environment URL) that the D365FO environment is integrated with.
 
-        This should be the full URL, e.g. "https://operations-acme-uat.crm4.dynamics.com/"
+        For example: "https://operations-acme-uat.crm4.dynamics.com/"
 
     .PARAMETER ClientId
         The ClientId obtained from the Azure Portal when you created a Registered Application
@@ -83,9 +83,7 @@
     .NOTES
         Tags: JIT, Database, Access, UDE, OData, RestApi
 
-        Author: Mötz Jensen (@Splaxi)
-
-        This cmdlet is inspired by the PowerShell script provided in GitHub issue for d365fo.tools
+        Author: Florian Hopfner (@FH-Inway)
 
 #>
 function Request-D365DatabaseJITAccess {
@@ -102,7 +100,7 @@ function Request-D365DatabaseJITAccess {
         [string] $ClientSecret,
 
         [Parameter(Mandatory = $true)]
-        [string] $Tenant,
+        [string] $Tenant, # TODO This could be preset from $Script.TenantId once UDE support is added (see https://github.com/d365collaborative/d365fo.tools/pull/868)
 
         [string] $ClientIPAddress = "127.0.0.1",
 
@@ -120,6 +118,17 @@ function Request-D365DatabaseJITAccess {
         # Clean up the URL to ensure it ends with a slash
         if (-not $Url.EndsWith('/')) {
             $Url = $Url + '/'
+        }
+
+        # Replace default IP address with IP address from icanhazip.com
+        if ($ClientIPAddress -eq "127.0.0.1") {
+            try {
+                $ClientIPAddress = (Invoke-RestMethod -Uri "https://icanhazip.com" -UseBasicParsing).Trim()
+                Write-PSFMessage -Level Verbose -Message "Detected public IP address: $ClientIPAddress"
+            }
+            catch {
+                Write-PSFMessage -Level Warning -Message "Could not determine public IP address from icanhazip.com. Falling back to default IP address: $ClientIPAddress"
+            }
         }
     }
 
@@ -153,30 +162,31 @@ function Request-D365DatabaseJITAccess {
 
             $response = Invoke-RestMethod -Uri $requestUrl -Method Post -Headers $headers -Body $body
 
-            if ($RawOutput) {
-                $result = $response
-            }
-            else {
+            $result = $response
+            if (-not $RawOutput) {
                 # Extract the relevant information from the response
-                $result = [PSCustomObject]@{
-                    Username         = $response.sqljitusername
-                    Password         = $response.sqljitpassword
-                    ServerName       = $response.servername
-                    DatabaseName     = $response.databasename
-                    DatabaseType     = $response.databasetype
-                    IPAddress        = $response.ipaddress
-                    Role             = $response.sqljitrole
-                    ExpirationTime   = $response.sqljitexpiration
-                    OperationId      = $response.operationhistoryid
+                $selectParams = @{
+                    TypeName = "D365FO.TOOLS.UDE.JITDatabaseAccess"
+                    Property = @{Name = "SQLJITCredential"; Expression = { 
+                        $password = $_.sqljitpassword | ConvertTo-SecureString -AsPlainText -Force
+                        New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($_.sqljitusername, $password)
+                        }},
+                        "servername as ServerName",
+                        "databasename as DatabaseName",
+                        "databasetype as DatabaseType",
+                        "ipaddress as IPAddress",
+                        "sqljitrole as SQLJITRole",
+                        "sqljitexpiration as SQLJITExpirationTime to DateTime",
+                        "operationhistoryid as OperationHistoryId"
                 }
+                $result = $response | Select-PSFObject @selectParams
             }
 
             if ($OutputAsJson) {
-                $result | ConvertTo-Json -Depth 10
+                $result = $result | ConvertTo-Json -Depth 10
             }
-            else {
-                $result
-            }
+
+            $result
         }
         catch {
             Write-PSFMessage -Level Host -Message "Something went wrong while requesting JIT database access" -Exception $PSItem.Exception
