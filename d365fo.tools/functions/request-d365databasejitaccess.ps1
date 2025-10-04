@@ -1,5 +1,4 @@
-﻿
-<#
+﻿<#
     .SYNOPSIS
         Request just in time (JIT) database access for a unified development environment (UDE)
 
@@ -18,8 +17,27 @@
     .PARAMETER ClientId
         The ClientId obtained from the Azure Portal when you created a Registered Application
 
-    .PARAMETER ClientSecret
+    .PARAMETER ClientSecretAsPlainString
         The ClientSecret obtained from the Azure Portal when you created a Registered Application
+
+        This is the plain text version of the ClientSecret parameter.
+
+        Either ClientSecretAsPlainString, ClientSecretAsSecureString, or Credential must be provided.
+
+    .PARAMETER ClientSecretAsSecureString
+        The ClientSecret obtained from the Azure Portal when you created a Registered Application
+
+        This is the secure string version of the ClientSecret parameter.
+
+        Either ClientSecretAsPlainString, ClientSecretAsSecureString, or Credential must be provided.
+
+    .PARAMETER Credential
+        The Credential object containing Username (ClientId) and Password (ClientSecret)
+
+        The Username will be used as ClientId
+        The Password will be used as ClientSecret
+
+        Either ClientSecretAsPlainString, ClientSecretAsSecureString, or Credential must be provided.
 
     .PARAMETER Tenant
         Azure Active Directory (AAD) tenant id (Guid) that the D365FO environment is connected to, that you want to access
@@ -27,7 +45,7 @@
     .PARAMETER ClientIPAddress
         The IP address of the client that needs database access
 
-        Default value is "127.0.0.1" for localhost access
+        Default value is "127.0.0.1" which will be replaced with the public IP address of the client as determined by querying "https://icanhazip.com"
 
     .PARAMETER Role
         The database role to assign to the JIT access
@@ -38,8 +56,6 @@
 
     .PARAMETER Reason
         The reason for requesting JIT database access
-
-        This is logged for audit purposes
 
         Default value is "Administrative access via d365fo.tools"
 
@@ -52,33 +68,56 @@
         Instructs the cmdlet to convert the output to a Json string
 
     .EXAMPLE
-        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecret "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522"
+        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522"
 
         This will request JIT database access for the D365FO environment.
-        It will use the default client IP address "127.0.0.1", role "Reader", and reason "Administrative access via d365fo.tools".
+        It will use the client's IP address, role "Reader", and reason "Administrative access via d365fo.tools".
         It will contact the D365FO instance specified in the Url parameter: "https://operations-acme-uat.crm4.dynamics.com/".
         It will authenticate against the "https://login.microsoftonline.com/e674da86-7ee5-40a7-b777-1111111111111/oauth2/token" url with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
         It will authenticate with the specified ClientId parameter: "dea8d7a9-1602-4429-b138-111111111111".
-        It will authenticate with the specified ClientSecret parameter: "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522".
+        It will authenticate with the specified ClientSecretAsPlainString parameter: "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522".
 
     .EXAMPLE
-        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecret "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -ClientIPAddress "192.168.1.100" -Role "Writer" -Reason "Development work"
+        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -ClientIPAddress "192.168.1.100" -Role "Writer" -Reason "Development work"
 
         This will request JIT database access for the D365FO environment with Writer privileges.
         It will use the client IP address "192.168.1.100", role "Writer", and reason "Development work".
         It will contact the D365FO instance specified in the Url parameter: "https://operations-acme-uat.crm4.dynamics.com/".
         It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
         It will authenticate with the specified ClientId parameter: "dea8d7a9-1602-4429-b138-111111111111".
-        It will authenticate with the specified ClientSecret parameter: "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522".
+        It will authenticate with the specified ClientSecretAsPlainString parameter: "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522".
 
     .EXAMPLE
-        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecret "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -OutputAsJson
+        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -OutputAsJson
 
         This will request JIT database access for the D365FO environment and display the result as json.
         It will contact the D365FO instance specified in the Url parameter: "https://operations-acme-uat.crm4.dynamics.com/".
         It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
         It will authenticate with the specified ClientId parameter: "dea8d7a9-1602-4429-b138-111111111111".
-        It will authenticate with the specified ClientSecret parameter: "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522".
+        It will authenticate with the specified ClientSecretAsPlainString parameter: "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522".
+
+    .EXAMPLE
+        PS C:\> $clientSecretSecure = Read-Host -AsSecureString "Enter the Client Secret"
+        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsSecureString $clientSecretSecure
+
+        This will prompt the user to enter the client secret securely (the input will be masked).
+        Then it will request JIT database access for the D365FO environment using the secure string for authentication.
+        It will use the client's IP address, role "Reader", and reason "Administrative access via d365fo.tools".
+        It will contact the D365FO instance specified in the Url parameter: "https://operations-acme-uat.crm4.dynamics.com/".
+        It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
+        It will authenticate with the specified ClientId parameter: "dea8d7a9-1602-4429-b138-111111111111".
+        It will authenticate with the client secret provided through the secure prompt.
+
+    .EXAMPLE
+        PS C:\> $credential = Get-Credential -UserName "dea8d7a9-1602-4429-b138-111111111111" -Message "Enter the Client Secret"
+        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -Credential $credential
+
+        This will prompt the user to enter the client secret through a secure credential dialog (using the ClientId as the username).
+        Then it will request JIT database access for the D365FO environment using the credential for authentication.
+        It will use the client's IP address, role "Reader", and reason "Administrative access via d365fo.tools".
+        It will contact the D365FO instance specified in the Url parameter: "https://operations-acme-uat.crm4.dynamics.com/".
+        It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
+        It will authenticate with the client id and secret provided through the credential object.
 
     .NOTES
         Tags: JIT, Database, Access, UDE, OData, RestApi
@@ -87,17 +126,24 @@
 
 #>
 function Request-D365DatabaseJITAccess {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'ByClientSecretAsPlainString')]
     [OutputType([System.String])]
     param (
         [Parameter(Mandatory = $true)]
         [string] $Url,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ParameterSetName = 'ByClientSecretAsPlainString')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'ByClientSecretAsSecureString')]
         [string] $ClientId,
 
-        [Parameter(Mandatory = $true)]
-        [string] $ClientSecret,
+        [Parameter(Mandatory = $true, ParameterSetName = 'ByClientSecretAsPlainString')]
+        [string] $ClientSecretAsPlainString,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'ByClientSecretAsSecureString')]
+        [System.Security.SecureString] $ClientSecretAsSecureString,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'ByCredential')]
+        [System.Management.Automation.PSCredential] $Credential,
 
         [Parameter(Mandatory = $true)]
         [string] $Tenant, # TODO This could be preset from $Script.TenantId once UDE support is added (see https://github.com/d365collaborative/d365fo.tools/pull/868)
@@ -115,6 +161,18 @@ function Request-D365DatabaseJITAccess {
     )
 
     begin {
+        # Extract ClientId and ClientSecret from credential if provided
+        if ($PSCmdlet.ParameterSetName -eq 'ByCredential') {
+            $ClientId = $Credential.UserName
+            $ClientSecretAsPlainString = $Credential.GetNetworkCredential().Password
+        }
+        # Convert SecureString to plain text if ClientSecretAsSecureString is provided
+        elseif ($PSCmdlet.ParameterSetName -eq 'ByClientSecretAsSecureString') {
+            $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($ClientSecretAsSecureString)
+            $ClientSecretAsPlainString = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+            [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($BSTR)
+        }
+
         # Clean up the URL to ensure it ends with a slash
         if (-not $Url.EndsWith('/')) {
             $Url = $Url + '/'
@@ -136,7 +194,7 @@ function Request-D365DatabaseJITAccess {
         $bearerParms = @{
             Resource        = $Url
             ClientId        = $ClientId
-            ClientSecret    = $ClientSecret
+            ClientSecret    = $ClientSecretAsPlainString
             AuthProviderUri = "https://login.microsoftonline.com/$Tenant/oauth2/token"
         }
 
@@ -196,5 +254,9 @@ function Request-D365DatabaseJITAccess {
     }
 
     end {
+        if ($PSCmdlet.ParameterSetName -ne 'ByClientSecretAsPlainString') {
+            # Clear sensitive variables
+            $ClientSecretAsPlainString = $null
+        }
     }
 }
