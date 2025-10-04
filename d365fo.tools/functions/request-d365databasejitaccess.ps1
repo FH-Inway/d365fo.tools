@@ -7,6 +7,8 @@
 
         This will allow you to get temporary database credentials for connecting to the database directly
 
+        If no credentials are provided (ClientId/ClientSecret or Credential), the function will automatically use interactive authentication via Azure PowerShell.
+
     .PARAMETER Url
         URL / URI for the D365FO Power Platform environment that provides the JIT access API.
 
@@ -67,6 +69,21 @@
     .PARAMETER OutputAsJson
         Instructs the cmdlet to convert the output to a Json string
 
+    .PARAMETER EnableException
+        This parameters disables user-friendly warnings and enables the throwing of exceptions
+        This is less user friendly, but allows catching exceptions in calling scripts
+        Usually this parameter is not used directly, but via the Enable-D365Exception cmdlet
+        See https://github.com/d365collaborative/d365fo.tools/wiki/Exception-handling#what-does-the--enableexception-parameter-do for further information
+
+    .EXAMPLE
+        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111"
+
+        This will request JIT database access for the D365FO environment using interactive authentication.
+        It will prompt you to sign in with your Azure AD credentials if not already signed in.
+        It will use the client's IP address, role "Reader", and reason "Administrative access via d365fo.tools".
+        It will contact the D365FO instance specified in the Url parameter: "https://operations-acme-uat.crm4.dynamics.com/".
+        It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
+    
     .EXAMPLE
         PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522"
 
@@ -126,7 +143,7 @@
 
 #>
 function Request-D365DatabaseJITAccess {
-    [CmdletBinding(DefaultParameterSetName = 'ByClientSecretAsPlainString')]
+    [CmdletBinding(DefaultParameterSetName = 'ByInteractiveLogin')]
     [OutputType([System.String])]
     param (
         [Parameter(Mandatory = $true)]
@@ -157,7 +174,9 @@ function Request-D365DatabaseJITAccess {
 
         [switch] $RawOutput,
 
-        [switch] $OutputAsJson
+        [switch] $OutputAsJson,
+
+        [switch] $EnableException
     )
 
     begin {
@@ -191,14 +210,47 @@ function Request-D365DatabaseJITAccess {
     }
 
     process {
-        $bearerParms = @{
-            Resource        = $Url
-            ClientId        = $ClientId
-            ClientSecret    = $ClientSecretAsPlainString
-            AuthProviderUri = "https://login.microsoftonline.com/$Tenant/oauth2/token"
-        }
+        # Get authentication token based on the parameter set
+        if ($PSCmdlet.ParameterSetName -ne 'ByInteractiveLogin') {
+            $bearerParms = @{
+                Resource        = $Url
+                ClientId        = $ClientId
+                ClientSecret    = $ClientSecretAsPlainString
+                AuthProviderUri = "https://login.microsoftonline.com/$Tenant/oauth2/token"
+            }
+            
+            $bearer = Invoke-ClientCredentialsGrant @bearerParms | Get-BearerToken
+        } 
+        else {
+            try {
+                # Check if already connected
+                $context = Get-AzContext
+                if (-not $context) {
+                    Write-PSFMessage -Level Verbose -Message "Not connected to Azure. Initiating login..."
+                    Connect-AzAccount -Tenant $Tenant -ErrorAction Stop
+                }
+                elseif ($context.Tenant.Id -ne $Tenant) {
+                    Write-PSFMessage -Level Verbose -Message "Connected to different tenant. Reconnecting to specified tenant..."
+                    Connect-AzAccount -Tenant $Tenant -ErrorAction Stop
+                }
+                else {
+                    Write-PSFMessage -Level Verbose -Message "Already connected to Azure tenant $Tenant"
+                }
 
-        $bearer = Invoke-ClientCredentialsGrant @bearerParms | Get-BearerToken
+                # Get access token for the Power Platform API
+                Write-PSFMessage -Level Verbose -Message "Requesting access token for resource: $Url"
+                $token = Get-AzAccessToken -ResourceUrl $Url -AsSecureString -ErrorAction Stop
+                $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($token.Token)
+                $tokenAsPlainString = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+                [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($BSTR)
+                $bearer = "Bearer $($tokenAsPlainString)"
+            }
+            catch {
+                Write-PSFMessage -Level Host -Message "Failed to authenticate using interactive login" -Exception $PSItem.Exception
+                Stop-PSFFunction -Message "Stopping because of authentication errors"
+                return
+            }
+        }
 
         $headers = @{
             'Authorization' = $bearer
@@ -248,7 +300,7 @@ function Request-D365DatabaseJITAccess {
         }
         catch {
             Write-PSFMessage -Level Host -Message "Something went wrong while requesting JIT database access" -Exception $PSItem.Exception
-            Stop-PSFFunction -Message "Stopping because of errors" -StepsUpward 1
+            Stop-PSFFunction -Message "Stopping because of errors"
             return
         }
     }
