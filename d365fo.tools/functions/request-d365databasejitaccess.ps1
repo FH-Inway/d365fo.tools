@@ -128,6 +128,15 @@
         It will authenticate with the specified ClientSecretAsPlainString parameter: "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522".
         
     .EXAMPLE
+        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -RawOutput
+        
+        This will request JIT database access for the D365FO environment and display the result as object with the content as it was received from the endpoint.
+        It will contact the D365FO instance specified in the Url parameter: "https://operations-acme-uat.crm4.dynamics.com/".
+        It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
+        It will authenticate with the specified ClientId parameter: "dea8d7a9-1602-4429-b138-111111111111".
+        It will authenticate with the specified ClientSecretAsPlainString parameter: "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522".
+        
+    .EXAMPLE
         PS C:\> $clientSecretSecure = Read-Host -AsSecureString "Enter the Client Secret"
         PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsSecureString $clientSecretSecure
         
@@ -166,6 +175,9 @@
         
 #>
 function Request-D365DatabaseJITAccess {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute(
+        'PSAvoidUsingConvertToSecureStringWithPlainText', '',
+        Justification = 'Converting plain text to Secure.String provides protection against accidental exposure in logs etc. when used correctly. Encrypting the plain text first would make it too difficult to use.')]
     [CmdletBinding(DefaultParameterSetName = 'ByInteractiveLogin')]
     [OutputType([System.String])]
     param (
@@ -245,7 +257,7 @@ function Request-D365DatabaseJITAccess {
             }
             
             $bearer = Invoke-ClientCredentialsGrant @bearerParms | Get-BearerToken
-        } 
+        }
         else {
             try {
                 # Check if already connected
@@ -321,7 +333,7 @@ function Request-D365DatabaseJITAccess {
                 # Extract the relevant information from the response
                 $selectParams = @{
                     TypeName = "D365FO.TOOLS.UDE.JITDatabaseAccess"
-                    Property = @{Name = "SQLJITCredential"; Expression = { 
+                    Property = @{Name = "SQLJITCredential"; Expression = {
                         $password = $_.sqljitpassword | ConvertTo-SecureString -AsPlainText -Force
                         New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($_.sqljitusername, $password)
                         }},
