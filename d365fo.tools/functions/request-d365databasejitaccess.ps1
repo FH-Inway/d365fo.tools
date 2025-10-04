@@ -61,6 +61,19 @@
 
         Default value is "Administrative access via d365fo.tools"
 
+    .PARAMETER SQLServerManagementStudioPath
+        The full path to the SQL Server Management Studio executable (ssms.exe)
+
+        If provided, the function will automatically open SQL Server Management Studio and connect to the database using the obtained credentials.
+
+        Example: "C:\Program Files\Microsoft SQL Server Management Studio 21\Release\Common7\IDE\SSMS.exe"
+
+        Note: Since version 18, SQL Server Management Studio does no longer allow providing the password directly in the command line. The password will be copied to clipboard instead for easy pasting. It will be cleared from clipboard after 60 seconds.
+        
+        Note: After SQL Server Management Studio has been started this way, it will display a "Connect to the following server?" warning dialog. Confirm it with "Yes". Next, because of the missing password, a "Connect to server" error dialog will be shown. Confirm it with "OK". Finally, a "Connect to server" form will be shown where the password can be pasted and the connection be established with the "Connect" button. Answering "No" on the first warning dialog will take you directly to the "Connect to server" form, but the database information will not be pre-filled.
+
+        Note: The connection may fail at first because it takes some time until the client's IP address is whitelisted in the Azure SQL Database firewall rules. If that happens, just try again after a minute or so.
+
     .PARAMETER RawOutput
         Instructs the cmdlet to include the outer structure of the response received from the endpoint
 
@@ -136,6 +149,15 @@
         It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
         It will authenticate with the client id and secret provided through the credential object.
 
+    .EXAMPLE
+        PS C:\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -SQLServerManagementStudioPath "C:\Program Files\Microsoft SQL Server Management Studio 21\Release\Common7\IDE\SSMS.exe"
+
+        This will request JIT database access for the D365FO environment using interactive authentication.
+        It will open SQL Server Management Studio and connect to the database using the obtained credentials.
+        It will use the client's IP address, role "Reader", and reason "Administrative access via d365fo.tools".
+        It will contact the D365FO instance specified in the Url parameter: "https://operations-acme-uat.crm4.dynamics.com/".
+        It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
+
     .NOTES
         Tags: JIT, Database, Access, UDE, OData, RestApi
 
@@ -171,6 +193,8 @@ function Request-D365DatabaseJITAccess {
         [string] $Role = "Reader",
 
         [string] $Reason = "Administrative access via d365fo.tools",
+
+        [string] $SQLServerManagementStudioPath,
 
         [switch] $RawOutput,
 
@@ -271,6 +295,25 @@ function Request-D365DatabaseJITAccess {
             Write-PSFMessage -Level Verbose -Message "Request body: $body"
 
             $response = Invoke-RestMethod -Uri $requestUrl -Method Post -Headers $headers -Body $body
+
+            if ($SQLServerManagementStudioPath -and (Test-Path -Path $SQLServerManagementStudioPath)) {
+                # Open SQL Management Studio and connect to the database using the obtained credentials
+                # Use the server name, database name, username, and password from the $response object
+                $serverName = $response.servername
+                $databaseName = $response.databasename
+                $username = $response.sqljitusername
+                $password = $response.sqljitpassword
+
+                # Copy the password to clipboard for easy pasting
+                $password | Set-Clipboard
+                Read-Host "Password copied to clipboard. Once you confirm this message, SQL Server Management Studio will be started with the database connection. Read the -SQLServerManagementStudioPath parameter description before you confirm with Enter. Press Enter to continue."
+                & $SQLServerManagementStudioPath -S $serverName -d $databaseName -U $username
+                for ($i = 60; $i -gt 0; $i--) {
+                    Write-Progress -Activity "JIT Database Access" -Status "Waiting for $i seconds before clearing clipboard..." -PercentComplete ((60 - $i) / 60 * 100)
+                    Start-Sleep -Seconds 1
+                }
+                Set-Clipboard " "
+            }
 
             $result = $response
             if (-not $RawOutput) {
