@@ -164,7 +164,7 @@
         Inspired by blogpost http://dev.goshoom.net/en/2016/11/installing-deployable-packages-with-powershell/
         
     .LINK
-        Invoke-D365SDPInstallUDE
+        Invoke-D365UdeSDPInstall
         
 #>
 function Invoke-D365SDPInstall {
@@ -216,7 +216,7 @@ function Invoke-D365SDPInstall {
     )
 
     if ($UnifiedDevelopmentEnvironment) {
-        Invoke-D365SDPInstallUDE -Path $Path -MetaDataDir $MetaDataDir -LogPath $LogPath
+        Invoke-D365UdeSDPInstall -Path $Path -MetaDataDir $MetaDataDir -LogPath $LogPath
         return
     }
 
