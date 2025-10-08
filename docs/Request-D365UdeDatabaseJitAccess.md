@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Request-D365DatabaseJITAccess
+# Request-D365UdeDatabaseJitAccess
 
 ## SYNOPSIS
 Request just in time (JIT) database access for a unified development environment (UDE)
@@ -14,28 +14,28 @@ Request just in time (JIT) database access for a unified development environment
 
 ### ByInteractiveLogin (Default)
 ```
-Request-D365DatabaseJITAccess -Url <String> -Tenant <String> [-ClientIPAddress <String>] [-Role <String>]
+Request-D365UdeDatabaseJitAccess -Url <String> -Tenant <String> [-ClientIPAddress <String>] [-Role <String>]
  [-Reason <String>] [-SQLServerManagementStudioPath <String>] [-RawOutput] [-OutputAsJson] [-EnableException]
  [<CommonParameters>]
 ```
 
 ### ByClientSecretAsSecureString
 ```
-Request-D365DatabaseJITAccess -Url <String> -ClientId <String> -ClientSecretAsSecureString <SecureString>
+Request-D365UdeDatabaseJitAccess -Url <String> -ClientId <String> -ClientSecretAsSecureString <SecureString>
  -Tenant <String> [-ClientIPAddress <String>] [-Role <String>] [-Reason <String>]
  [-SQLServerManagementStudioPath <String>] [-RawOutput] [-OutputAsJson] [-EnableException] [<CommonParameters>]
 ```
 
 ### ByClientSecretAsPlainString
 ```
-Request-D365DatabaseJITAccess -Url <String> -ClientId <String> -ClientSecretAsPlainString <String>
+Request-D365UdeDatabaseJitAccess -Url <String> -ClientId <String> -ClientSecretAsPlainString <String>
  -Tenant <String> [-ClientIPAddress <String>] [-Role <String>] [-Reason <String>]
  [-SQLServerManagementStudioPath <String>] [-RawOutput] [-OutputAsJson] [-EnableException] [<CommonParameters>]
 ```
 
 ### ByCredential
 ```
-Request-D365DatabaseJITAccess -Url <String> -Credential <PSCredential> -Tenant <String>
+Request-D365UdeDatabaseJitAccess -Url <String> -Credential <PSCredential> -Tenant <String>
  [-ClientIPAddress <String>] [-Role <String>] [-Reason <String>] [-SQLServerManagementStudioPath <String>]
  [-RawOutput] [-OutputAsJson] [-EnableException] [<CommonParameters>]
 ```
@@ -51,7 +51,7 @@ If no credentials are provided (ClientId/ClientSecret or Credential), the functi
 
 ### EXAMPLE 1
 ```
-Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111"
+Request-D365UdeDatabaseJitAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111"
 ```
 
 This will request JIT database access for the D365FO environment using interactive authentication.
@@ -62,7 +62,7 @@ It will authenticate against the Azure Active Directory with the specified Tenan
 
 ### EXAMPLE 2
 ```
-Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522"
+Request-D365UdeDatabaseJitAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522"
 ```
 
 This will request JIT database access for the D365FO environment.
@@ -74,7 +74,7 @@ It will authenticate with the specified ClientSecretAsPlainString parameter: "Vj
 
 ### EXAMPLE 3
 ```
-Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -ClientIPAddress "192.168.1.100" -Role "Writer" -Reason "Development work"
+Request-D365UdeDatabaseJitAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -ClientIPAddress "192.168.1.100" -Role "Writer" -Reason "Development work"
 ```
 
 This will request JIT database access for the D365FO environment with Writer privileges.
@@ -86,7 +86,7 @@ It will authenticate with the specified ClientSecretAsPlainString parameter: "Vj
 
 ### EXAMPLE 4
 ```
-Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -OutputAsJson
+Request-D365UdeDatabaseJitAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -OutputAsJson
 ```
 
 This will request JIT database access for the D365FO environment and display the result as json.
@@ -97,10 +97,21 @@ It will authenticate with the specified ClientSecretAsPlainString parameter: "Vj
 
 ### EXAMPLE 5
 ```
+Request-D365UdeDatabaseJitAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsPlainString "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522" -RawOutput
+```
+
+This will request JIT database access for the D365FO environment and display the result as object with the content as it was received from the endpoint.
+It will contact the D365FO instance specified in the Url parameter: "https://operations-acme-uat.crm4.dynamics.com/".
+It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
+It will authenticate with the specified ClientId parameter: "dea8d7a9-1602-4429-b138-111111111111".
+It will authenticate with the specified ClientSecretAsPlainString parameter: "Vja/VmdxaLOPR+alkjfsadffelkjlfw234522".
+
+### EXAMPLE 6
+```
 $clientSecretSecure = Read-Host -AsSecureString "Enter the Client Secret"
 ```
 
-PS C:\\\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsSecureString $clientSecretSecure
+PS C:\\\> Request-D365UdeDatabaseJitAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -ClientId "dea8d7a9-1602-4429-b138-111111111111" -ClientSecretAsSecureString $clientSecretSecure
 
 This will prompt the user to enter the client secret securely (the input will be masked).
 Then it will request JIT database access for the D365FO environment using the secure string for authentication.
@@ -110,12 +121,12 @@ It will authenticate against the Azure Active Directory with the specified Tenan
 It will authenticate with the specified ClientId parameter: "dea8d7a9-1602-4429-b138-111111111111".
 It will authenticate with the client secret provided through the secure prompt.
 
-### EXAMPLE 6
+### EXAMPLE 7
 ```
 $credential = Get-Credential -UserName "dea8d7a9-1602-4429-b138-111111111111" -Message "Enter the Client Secret"
 ```
 
-PS C:\\\> Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -Credential $credential
+PS C:\\\> Request-D365UdeDatabaseJitAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -Credential $credential
 
 This will prompt the user to enter the client secret through a secure credential dialog (using the ClientId as the username).
 Then it will request JIT database access for the D365FO environment using the credential for authentication.
@@ -124,9 +135,9 @@ It will contact the D365FO instance specified in the Url parameter: "https://ope
 It will authenticate against the Azure Active Directory with the specified Tenant parameter: "e674da86-7ee5-40a7-b777-1111111111111".
 It will authenticate with the client id and secret provided through the credential object.
 
-### EXAMPLE 7
+### EXAMPLE 8
 ```
-Request-D365DatabaseJITAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -SQLServerManagementStudioPath "C:\Program Files\Microsoft SQL Server Management Studio 21\Release\Common7\IDE\SSMS.exe"
+Request-D365UdeDatabaseJitAccess -Url "https://operations-acme-uat.crm4.dynamics.com/" -Tenant "e674da86-7ee5-40a7-b777-1111111111111" -SQLServerManagementStudioPath "C:\Program Files\Microsoft SQL Server Management Studio 21\Release\Common7\IDE\SSMS.exe"
 ```
 
 This will request JIT database access for the D365FO environment using interactive authentication.

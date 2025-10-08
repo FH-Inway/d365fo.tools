@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Invoke-D365SDPInstallUDE
+# Invoke-D365UdeSDPInstall
 
 ## SYNOPSIS
 Install a Software Deployable Package (SDP) in a unified development environment
@@ -13,7 +13,7 @@ Install a Software Deployable Package (SDP) in a unified development environment
 ## SYNTAX
 
 ```
-Invoke-D365SDPInstallUDE [-Path] <String> [-MetaDataDir] <String> [-LogPath <String>] [-Force]
+Invoke-D365UdeSDPInstall [-Path] <String> [-MetaDataDir] <String> [-LogPath <String>] [-Force]
  [<CommonParameters>]
 ```
 
@@ -27,7 +27,7 @@ Finally, it extracts the module zip files into the metadata directory.
 
 ### EXAMPLE 1
 ```
-Invoke-D365SDPInstallUDE -Path "c:\temp\package.zip" -MetaDataDir "c:\MyRepository\Metadata"
+Invoke-D365UdeSDPInstall -Path "c:\temp\package.zip" -MetaDataDir "c:\MyRepository\Metadata"
 ```
 
 This will install the modules contained in the c:\temp\package.zip file into the c:\MyRepository\Metadata directory.

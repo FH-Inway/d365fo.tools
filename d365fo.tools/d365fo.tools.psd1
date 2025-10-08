@@ -240,7 +240,7 @@
 		'Invoke-D365RunbookAnalyzer',
 
 		'Invoke-D365SDPInstall',
-		'Invoke-D365SDPInstallUDE',
+		'Invoke-D365UdeSDPInstall',
 		'Invoke-D365SCDPBundleInstall',
 		'Invoke-D365SeleniumDownload',
 		'Invoke-D365SysFlushAodCache',
@@ -272,7 +272,7 @@
 		'Remove-D365Model',
 		'Remove-D365User',
 
-		'Request-D365DatabaseJITAccess',
+		'Request-D365UdeDatabaseJitAccess',
 
 		'Rename-D365Instance',
 		'Rename-D365ComputerName',

@@ -26,7 +26,7 @@
         Used when the input is a zip file, that will auto extract to a folder named like the zip file.
         
     .EXAMPLE
-        PS C:\> Invoke-D365SDPInstallUDE -Path "c:\temp\package.zip" -MetaDataDir "c:\MyRepository\Metadata"
+        PS C:\> Invoke-D365UdeSDPInstall -Path "c:\temp\package.zip" -MetaDataDir "c:\MyRepository\Metadata"
         
         This will install the modules contained in the c:\temp\package.zip file into the c:\MyRepository\Metadata directory.
         
@@ -34,7 +34,8 @@
         Author: Florian Hopfner (@FH-Inway)
         
 #>
-function Invoke-D365SDPInstallUDE {
+function Invoke-D365UdeSDPInstall {
+    [Alias("Invoke-D365SDPInstallUDE")]
     param (
         [Parameter(Mandatory = $True, Position = 1 )]
         [Alias('Hotfix')]
