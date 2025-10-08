@@ -1,4 +1,4 @@
-﻿Describe "Invoke-D365SDPInstallUDE Unit Tests" -Tag "Unit" {
+﻿Describe "Invoke-D365UdeSDPInstall Unit Tests" -Tag "Unit" {
 	BeforeAll {
 		# Place here all things needed to prepare for the tests
 	}
@@ -8,11 +8,11 @@
 	
 	Describe "Ensuring unchanged command signature" {
 		It "should have the expected parameter sets" {
-			(Get-Command Invoke-D365SDPInstallUDE).ParameterSets.Name | Should -Be '__AllParameterSets'
+			(Get-Command Invoke-D365UdeSDPInstall).ParameterSets.Name | Should -Be '__AllParameterSets'
 		}
 		
 		It 'Should have the expected parameter Path' {
-			$parameter = (Get-Command Invoke-D365SDPInstallUDE).Parameters['Path']
+			$parameter = (Get-Command Invoke-D365UdeSDPInstall).Parameters['Path']
 			$parameter.Name | Should -Be 'Path'
 			$parameter.ParameterType.ToString() | Should -Be System.String
 			$parameter.IsDynamic | Should -Be $False
@@ -25,7 +25,7 @@
 			$parameter.ParameterSets['__AllParameterSets'].ValueFromRemainingArguments | Should -Be $False
 		}
 		It 'Should have the expected parameter MetaDataDir' {
-			$parameter = (Get-Command Invoke-D365SDPInstallUDE).Parameters['MetaDataDir']
+			$parameter = (Get-Command Invoke-D365UdeSDPInstall).Parameters['MetaDataDir']
 			$parameter.Name | Should -Be 'MetaDataDir'
 			$parameter.ParameterType.ToString() | Should -Be System.String
 			$parameter.IsDynamic | Should -Be $False
@@ -38,7 +38,7 @@
 			$parameter.ParameterSets['__AllParameterSets'].ValueFromRemainingArguments | Should -Be $False
 		}
 		It 'Should have the expected parameter LogPath' {
-			$parameter = (Get-Command Invoke-D365SDPInstallUDE).Parameters['LogPath']
+			$parameter = (Get-Command Invoke-D365UdeSDPInstall).Parameters['LogPath']
 			$parameter.Name | Should -Be 'LogPath'
 			$parameter.ParameterType.ToString() | Should -Be System.String
 			$parameter.IsDynamic | Should -Be $False
@@ -51,7 +51,7 @@
 			$parameter.ParameterSets['__AllParameterSets'].ValueFromRemainingArguments | Should -Be $False
 		}
 		It 'Should have the expected parameter Force' {
-			$parameter = (Get-Command Invoke-D365SDPInstallUDE).Parameters['Force']
+			$parameter = (Get-Command Invoke-D365UdeSDPInstall).Parameters['Force']
 			$parameter.Name | Should -Be 'Force'
 			$parameter.ParameterType.ToString() | Should -Be System.Management.Automation.SwitchParameter
 			$parameter.IsDynamic | Should -Be $False
