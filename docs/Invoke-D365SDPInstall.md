@@ -440,5 +440,5 @@ Inspired by blogpost http://dev.goshoom.net/en/2016/11/installing-deployable-pac
 
 ## RELATED LINKS
 
-[Invoke-D365SDPInstallUDE]()
+[Invoke-D365UdeSDPInstall]()
 
