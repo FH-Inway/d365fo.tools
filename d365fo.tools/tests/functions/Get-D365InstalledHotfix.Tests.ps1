@@ -47,7 +47,7 @@
 			$parameter.ParameterSets['Default'].IsMandatory | Should -Be $False
 			$parameter.ParameterSets['Default'].Position | Should -Be 3
 			$parameter.ParameterSets['Default'].ValueFromPipeline | Should -Be $False
-			$parameter.ParameterSets['Default'].ValueFromPipelineByPropertyName | Should -Be $False
+			$parameter.ParameterSets['Default'].ValueFromPipelineByPropertyName | Should -Be $True
 			$parameter.ParameterSets['Default'].ValueFromRemainingArguments | Should -Be $False
 		}
 		It 'Should have the expected parameter Name' {

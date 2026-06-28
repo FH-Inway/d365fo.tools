@@ -54,9 +54,9 @@
         
     .EXAMPLE
         PS C:\> Get-D365Model -Name "MyModel" | Get-D365InstalledHotfix
-
+        
         This will retrieve the "MyModel" model and pipe it to Get-D365InstalledHotfix to list all hotfixes installed for that model.
-
+        
     .NOTES
         Tags: Hotfix, Servicing, Model, Models, KB, Patch, Patching, PackagesLocalDirectory
         
