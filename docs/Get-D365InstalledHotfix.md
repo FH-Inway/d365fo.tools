@@ -44,6 +44,13 @@ Get-D365InstalledHotfix -Model "*retail*" -KB "*43*"
 
 This will display all installed hotfixes found for all models that matches the search for "*retail*" and only with KB's that matches the search for "*43*" found on this machine
 
+### EXAMPLE 4
+```
+Get-D365Model -Name "MyModel" | Get-D365InstalledHotfix
+```
+
+This will retrieve the "MyModel" model and pipe it to Get-D365InstalledHotfix to list all hotfixes installed for that model.
+
 ## PARAMETERS
 
 ### -BinDir
@@ -92,12 +99,12 @@ Default value is "*" which will search for all models
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: ModelName
 
 Required: False
 Position: 4
 Default value: *
-Accept pipeline input: False
+Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
