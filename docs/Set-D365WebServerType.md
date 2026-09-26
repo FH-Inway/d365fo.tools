@@ -13,7 +13,7 @@ Set the web server type to be used to run the D365FO instance
 ## SYNTAX
 
 ```
-Set-D365WebServerType [-RuntimeHostType] <String> [<CommonParameters>]
+Set-D365WebServerType [-RuntimeHostTypeOption] <String> [-Force] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -28,7 +28,7 @@ It will look for the file located in the default Package Directory.
 
 ### EXAMPLE 1
 ```
-Set-D365WebServerType -RuntimeHostType "IIS"
+Set-D365WebServerType -RuntimeHostTypeOption "IIS"
 ```
 
 This will update the current web server type registered in the "DynamicsDevConfig.xml" file.
@@ -38,7 +38,7 @@ It will replace the value inside the "RuntimeHostType" tag.
 
 ## PARAMETERS
 
-### -RuntimeHostType
+### -RuntimeHostTypeOption
 The type of web server you want to use.
 
 Valid options are:
@@ -48,12 +48,57 @@ Valid options are:
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: RuntimeHostType
 
 Required: True
 Position: 1
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
+Accept wildcard characters: False
+```
+
+### -Force
+Switch parameter to force the operation without confirmation.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+Switch parameter to show what would happen if the cmdlet runs, without making any changes.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+Switch parameter to require confirmation before making changes.
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -68,7 +113,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 Tag: Web Server, IIS, IIS Express, Development
 
 Author: Sander Holvoet (@smholvoet)
-
 Author: Mötz Jensen (@Splaxi)
+Author: Florian Hopfner (@FH-Inway)
 
 ## RELATED LINKS
