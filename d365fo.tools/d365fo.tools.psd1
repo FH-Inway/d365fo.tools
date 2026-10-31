@@ -89,6 +89,8 @@
 
 		'Get-D365AOTObject',
 
+		'Get-D365AssemblyBinding',
+
 		'Get-D365AzureDevOpsNuget',
 
 		'Get-D365AzureStorageConfig',
