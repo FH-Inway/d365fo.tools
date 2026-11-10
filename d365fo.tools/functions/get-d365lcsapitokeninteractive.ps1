@@ -1,4 +1,5 @@
-﻿<#
+﻿
+<#
     .SYNOPSIS
         Get OAuth 2.0 token for LCS via an interactive sign-in flow
         

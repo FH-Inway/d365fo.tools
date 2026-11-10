@@ -1,45 +1,46 @@
-﻿<#
+﻿
+<#
     .SYNOPSIS
         Register D365FO Event Trace Providers
-
+        
     .DESCRIPTION
         Register event manifests from the AOS Monitoring directory to restore missing Event Trace Providers for Dynamics 365 for Finance and Operations.
-
+        
         Existing providers are registered again. Each manifest uses the first matching resource DLL in this order: .Instrumentation.dll, Resource.dll, .dll.
-
+        
         Run from an elevated PowerShell session on the D365FO server. Restart the VM after registration before starting a trace.
-
+        
     .PARAMETER Path
         Path to the Monitoring directory containing the event manifests and resource DLLs.
-
+        
         Defaults to the Monitoring directory below the configured AOS application root.
-
+        
     .PARAMETER EnableException
         Disable user-friendly warnings and throw exceptions that can be caught by calling scripts.
-
+        
     .PARAMETER WhatIf
         Show which event manifests would be registered without changing the installed providers.
-
+        
     .PARAMETER Confirm
         Prompt for confirmation before registering each event manifest.
-
+        
     .EXAMPLE
         PS C:\> Register-D365EventTraceProvider
-
+        
         Register the event manifests from the configured AOS Monitoring directory.
         Restart the VM afterwards before starting a trace.
-
+        
     .EXAMPLE
         PS C:\> Register-D365EventTraceProvider -Path "K:\AosService\WebRoot\Monitoring" -WhatIf
-
+        
         Show which event manifests would be registered from the specified Monitoring directory.
         No providers are changed.
-
+        
     .NOTES
         Tags: ETL, EventTracing, EventTrace, Monitoring
-
+        
         Based on the troubleshooting guidance published by Automaly.
-
+        
     .LINK
         https://automaly.com/posts/unable-to-trace-error/
 #>

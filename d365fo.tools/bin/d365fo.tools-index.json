@@ -3085,6 +3085,58 @@
         "Syntax":  "Get-D365LcsApiToken [[-ClientId] \u003cString\u003e] [-Username] \u003cString\u003e [-Password] \u003cSecureString\u003e [[-LcsApiUri] \u003cString\u003e] [-EnableException] [\u003cCommonParameters\u003e]"
     },
     {
+        "CommandName":  "Get-D365LcsApiTokenInteractive",
+        "Description":  "Get an OAuth 2.0 access token for the LCS API, using an interactive sign-in flow based on the device authentication flow\n\nYour clipboard will be set with a device code, and your default browser will navigate to \"https://microsoft.com/devicelogin\"\nYou will have to paste in the device code, and complete an ordinary sign-in with your credentials\nWhen your sign-in is complete, it will pick up the OAuth 2.0 token from Azure AD\n\nThe token is requested with the LcsApiUri as the resource / scope, to ensure it is valid against the correct LCS API endpoint\n\nThe output object can be piped directly into Set-D365LcsApiConfig to save the token details as default values",
+        "Tags":  [
+                     "LCS",
+                     "Api",
+                     "OAuth",
+                     "Token",
+                     "JWT",
+                     "DeviceAuth",
+                     "Device",
+                     "DeviceCode"
+                 ],
+        "Params":  [
+                       [
+                           "LcsApiUri",
+                           "URI / URL to the LCS API you want to use\nThe value depends on where your LCS project is located. There are multiple valid URI\u0027s / URL\u0027s\nValid options:\r\n\"https://lcsapi.lcs.dynamics.com\"\r\n\"https://lcsapi.eu.lcs.dynamics.com\"\r\n\"https://lcsapi.fr.lcs.dynamics.com\"\r\n\"https://lcsapi.sa.lcs.dynamics.com\"\r\n\"https://lcsapi.uae.lcs.dynamics.com\"\r\n\"https://lcsapi.ch.lcs.dynamics.com\"\r\n\"https://lcsapi.no.lcs.dynamics.com\"\r\n\"https://lcsapi.lcs.dynamics.cn\"\r\n\"https://lcsapi.gov.lcs.microsoftdynamics.us\"\nDefault value can be configured using Set-D365LcsApiConfig",
+                           "",
+                           false,
+                           "false",
+                           "$Script:LcsApiLcsApiUri"
+                       ],
+                       [
+                           "Timeout",
+                           "Instruct the cmdlet how long time you need to be able to complete the interactive logon\nThe default value is: 300 seconds\nNote: The parameter doesn\u0027t show up in the intellisense when tabbing through all available parameters, as it shouldn\u0027t be necessary to change the value",
+                           "",
+                           false,
+                           "false",
+                           "300"
+                       ],
+                       [
+                           "EnableException",
+                           "This parameters disables user-friendly warnings and enables the throwing of exceptions\r\nThis is less user friendly, but allows catching exceptions in calling scripts",
+                           "",
+                           false,
+                           "false",
+                           "False"
+                       ]
+                   ],
+        "Alias":  "",
+        "Author":  "Mötz Jensen (@Splaxi)",
+        "Synopsis":  "Get OAuth 2.0 token for LCS via an interactive sign-in flow",
+        "Name":  "Get-D365LcsApiTokenInteractive",
+        "Links":  [
+                      null,
+                      null,
+                      null,
+                      null
+                  ],
+        "Examples":  "-------------------------- EXAMPLE 1 --------------------------\nPS C:\\\u003eGet-D365LcsApiTokenInteractive\nThis will start an interactive sign-in process against Azure AD.\r\nIt will utilize the active LCS configuration for the LcsApiUri (Resource).\r\nIt will copy the device code into your clipboard.\r\nIt will start the default browser and navigate to \"https://microsoft.com/devicelogin\".\r\nIt will wait the default amount of seconds for you to complete the interactive sign-in.\nIt will use the default LCS configuration details that are stored in the configuration store.\n-------------------------- EXAMPLE 2 --------------------------\nPS C:\\\u003eGet-D365LcsApiTokenInteractive -LcsApiUri \"https://lcsapi.eu.lcs.dynamics.com\"\nThis will start an interactive sign-in process against Azure AD.\r\nIt will request a token with the \"https://lcsapi.eu.lcs.dynamics.com\" LCS API as the resource / scope.\r\nIt will copy the device code into your clipboard.\r\nIt will start the default browser and navigate to \"https://microsoft.com/devicelogin\".\r\nIt will wait the default amount of seconds for you to complete the interactive sign-in.\n-------------------------- EXAMPLE 3 --------------------------\nPS C:\\\u003eGet-D365LcsApiTokenInteractive | Set-D365LcsApiConfig -ProjectId 123456789\nThis will start an interactive sign-in process against Azure AD and save the needed details.\r\nThe output object received from Get-D365LcsApiTokenInteractive is piped directly to Set-D365LcsApiConfig.\r\nSet-D365LcsApiConfig will save the access_token(BearerToken), refresh_token(RefreshToken), expires_on(ActiveTokenExpiresOn) and resource(LcsApiUri).\nThis should be your default approach, so you don\u0027t have to supply the same parameters for every single cmdlet.\n-------------------------- EXAMPLE 4 --------------------------\nPS C:\\\u003eGet-D365LcsApiTokenInteractive -LcsApiUri \"https://lcsapi.lcs.dynamics.com\" | Set-D365LcsApiConfig\nThis will start an interactive sign-in process against Azure AD and save the needed details.\r\nIt will request a token with the \"https://lcsapi.lcs.dynamics.com\" (NON-EUROPE) LCS API as the resource / scope.\r\nThe output object received from Get-D365LcsApiTokenInteractive is piped directly to Set-D365LcsApiConfig.\r\nSet-D365LcsApiConfig will save the access_token(BearerToken), refresh_token(RefreshToken), expires_on(ActiveTokenExpiresOn) and resource(LcsApiUri).",
+        "Syntax":  "Get-D365LcsApiTokenInteractive [[-LcsApiUri] \u003cString\u003e] [[-Timeout] \u003cInt32\u003e] [-EnableException] [\u003cCommonParameters\u003e]"
+    },
+    {
         "CommandName":  "Get-D365LcsAssetFile",
         "Description":  "Get the available files from the Asset Library in LCS project",
         "Params":  [
